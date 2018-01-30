@@ -20,8 +20,9 @@ profile = False
 #-----------------------------------------------------------------------------#
 # Specify model and table locations here
 #-----------------------------------------------------------------------------#
-path_to_models = 'models/'
-path_to_tables = 'models/'
+dir = os.path.dirname(os.path.abspath(__file__))
+path_to_models = dir + '/models/'
+path_to_tables = dir + '/models/'
 #-----------------------------------------------------------------------------#
 
 path_to_umodel = path_to_models + 'uni_skip.npz'
