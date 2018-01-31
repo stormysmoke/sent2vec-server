@@ -1,1 +1,1 @@
-worker: date
+worker: ./download_models && date
