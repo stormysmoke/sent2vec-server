@@ -61,4 +61,4 @@ data/
 
 # Downloaded models (except file containing the code to download the models)
 */*/models/*
-!*/*/models/SOURCEME.sh
+!*/*/models/URL.txt
