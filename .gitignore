@@ -60,5 +60,5 @@ target/
 data/
 
 # Downloaded models (except file containing the code to download the models)
-*/*/models/*
-!*/*/models/URL.txt
+skipthoughts/models/*
+!skipthoughts/models/URL.txt

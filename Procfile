@@ -1,1 +1,1 @@
-worker: ./download_models && python tmp_run.py
+worker: ./download_models && ./main.py
