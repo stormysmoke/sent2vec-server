@@ -1,5 +1,5 @@
 import nltk.tokenize
-
+nltk.download('punkt')
 
 """
 Various utility functions.

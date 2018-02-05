@@ -5,6 +5,7 @@ import json
 import sent2vec_manager
 
 rabbitmq_queue = "website-to-sent2vec"
+# TODO: Move credentials to credential file or environment variable
 rabbitmq_uri = "amqp://buxfdlwh:cekAFXaYuaa_8MSyptSl7Zx1atFcb8OY@termite.rmq.cloudamqp.com/buxfdlwh"
 
 # Callback function for handling message in the request queue
