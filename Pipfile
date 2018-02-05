@@ -1,8 +1,12 @@
 [requires]
+
 python_version = '2.7'
 
+
 [packages]
-numpy = '*'
-scipy = '*'
-Theano = '*'
-nltk = '*'
+
+numpy = "*"
+scipy = "*"
+theano = "*"
+nltk = "*"
+pika = "*"

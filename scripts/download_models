@@ -1,9 +1,6 @@
 #!/bin/bash
 
 # Download the model files specified in an URL file in the models directory.
-
-echo "Downloading model files"
-dir=sent2vec/skipthoughts/models
+dir=skipthoughts/models
 url_file=URL.txt
-# Note: -nc skips the download if the file already exists
 wget -i "$dir/$url_file" -P "$dir" -nv -nc
