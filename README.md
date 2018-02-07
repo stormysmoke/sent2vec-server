@@ -27,7 +27,9 @@ For a decent peformance, the compute instance should have at least 2 CPUs. I hav
 
 The following applies to deployment on **GCP Compute Engine** with a **Debian 8.0** image.
 
-After copying all the files of the application to the instance (including the 5.5 GB model files), you have to do the following on the instance (all from within the application root directory):
+First of all, you have to copy all the files of this application, including the 5.5 GB model files, to your GCP Compute Engine instance. You can do this for example by cloning this repository to your instance (just first install Git with `sudo apt-get install git-core`). The model files you can download from the URLs listed in the `URL.txt` file in the `models/` directory, for example with `wget -i URL.txt`. You could also upload them from your local machine with `scp`, if you have them locally.
+
+When all the files are deployed, you have to do the following (all from within the application root directory):
 
 Install the Python dependencies and create Python virtual environment:
 
