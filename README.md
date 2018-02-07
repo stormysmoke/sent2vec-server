@@ -21,17 +21,24 @@ The application is designed to be deployed to a IaaS platform like Google Cloud 
 
 The used machine learning model is around 5.5 GB in size. Thus, the compute instance must provide at least this amount of memory and hard disk space.
 
-For a decent peformance, the compute instance should have at least 2 CPUs. I have tested the app on a GCP Compute Engine instance with a single CPU, and the performance is quite bad (indexing a 2500 word text takes more than 1 minute vs. 30 seconds on my MacBook Air).
+I observed no significant performance difference when the app runs on 1, 2, or 4 CPUs. In all cases the indexing of text is rather slow, much slower than on my MacBook Air. It seems that the code can't take advantage of parallelisation and multiple CPUs. This is a problem to be investigated.
 
 ### Deployment Instructions
 
-The following applies to deployment on **GCP Compute Engine** with a **Debian 8.0** image.
+The following applies to deployment on **GCP Compute Engine** with a **Debian 9.0** image.
 
 First of all, you have to copy all the files of this application, including the 5.5 GB model files, to your GCP Compute Engine instance. You can do this for example by cloning this repository to your instance (just first install Git with `sudo apt-get install git-core`). The model files you can download from the URLs listed in the `URL.txt` file in the `models/` directory, for example with `wget -i URL.txt`. You could also upload them from your local machine with `scp`, if you have them locally.
 
-When all the files are deployed, you have to do the following (all from within the application root directory):
+When all the files are deployed, you have to do the following:
 
-Install the Python dependencies and create Python virtual environment:
+Install `pip` and `pipenv`:
+
+~~~bash
+sudo apt-get install python-pip
+sudo pip install pipenv
+~~~
+
+Install the Python dependencies and create Python virtual environment (from within the application root directory):
 
 ~~~bash
 pipenv install
@@ -81,5 +88,5 @@ Request:
 Response:
 
 ~~~json
-{"result": [["Sent 1", "Sent 2", "Sent 3"], [0.84, 0.94, 1.04]]
+{"result": [["Sentence 1", "Sentence 2", "Sentence 3"], [0.84, 0.94, 1.04]]}
 ~~~
