@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
+import os
 import pika
 import json
 import sent2vec_manager
 
 rabbitmq_queue = "website-to-sent2vec"
-# TODO: Move credentials to credential file or environment variable
-rabbitmq_uri = "amqp://buxfdlwh:cekAFXaYuaa_8MSyptSl7Zx1atFcb8OY@termite.rmq.cloudamqp.com/buxfdlwh"
 
 # Callback function for handling message in the request queue
 def __on_request(channel, method, props, body):
@@ -19,8 +18,8 @@ def __on_request(channel, method, props, body):
     # Request is to index a piece of text
     if request['method'] == "index":
         text = request['params']
-        sent2vec_manager.index_string(text)
-        result = None
+        id = sent2vec_manager.index_string(text)
+        result = id
     # Request is to query a sentence in a previously indexed piece of text
     elif request['method'] == "query":
         sentence = request['params'][0]
@@ -42,9 +41,16 @@ def __on_request(channel, method, props, body):
 
     channel.basic_ack(delivery_tag=method.delivery_tag)
 
+# If there is a RabbitMQ server URI defined in an env variable, use it
+var_name = 'RABBITMQ_URI'
+if var_name in os.environ:
+    rabbitmq_uri = os.environ[var_name]
+    connection = pika.BlockingConnection(pika.URLParameters(rabbitmq_uri))
+# If there is no RabbitMQ server URI, connect to RabbitMQ server on localhost
+else:
+    connection = pika.BlockingConnection()
 
 # Establish connection to RabbitMQ server
-connection = pika.BlockingConnection(pika.URLParameters(rabbitmq_uri))
 channel = connection.channel()
 
 # Queue for requests from the website to sent2vec server
