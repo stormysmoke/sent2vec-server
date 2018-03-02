@@ -1,4 +1,5 @@
 import numpy
+import uuid
 from scipy.spatial.distance import cdist
 from scipy.linalg import norm
 import skipthoughts.skipthoughts as skipthoughts
@@ -26,16 +27,19 @@ def index_string(text):
     """
     global __sentences
     global __vectors
+    id = str(uuid.uuid4())
     __sentences = numpy.array(util.get_sentences(text))
     __vectors = __encoder.encode(__sentences)
+    return id
 
 def index_file(filename):
     """
     Index all the sentences in a text file as vectors.
     """
     f = open(filename, 'r')
-    index_string(f.read())
+    id = index_string(f.read())
     f.close()
+    return id
 
 def query(sentence, k, type="dist"):
     """
