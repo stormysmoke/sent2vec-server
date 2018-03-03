@@ -5,7 +5,7 @@ import pika
 import json
 import sent2vec_manager
 
-rabbitmq_queue = "website-to-sent2vec"
+rabbitmq_queue = "sent2vec-front-to-back"
 
 # Callback function for handling message in the request queue
 def __on_request(channel, method, props, body):

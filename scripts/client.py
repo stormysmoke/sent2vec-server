@@ -37,7 +37,7 @@ class RpcClient(object):
     A client for the Sent2Vec service for testing.
     """
 
-    req_queue_name = "website-to-sent2vec"
+    req_queue_name = "sent2vec-front-to-back"
 
     def __init__(self):
         """
