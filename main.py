@@ -45,9 +45,11 @@ def __on_request(channel, method, props, body):
 var_name = 'RABBITMQ_URI'
 if var_name in os.environ:
     rabbitmq_uri = os.environ[var_name]
+    print("Connecting to RabbitMQ: " + rabbitmq_uri)
     connection = pika.BlockingConnection(pika.URLParameters(rabbitmq_uri))
 # If there is no RabbitMQ server URI, connect to RabbitMQ server on localhost
 else:
+    print("Connecting to default RabbitMQ server on localhost.")
     connection = pika.BlockingConnection()
 
 # Establish connection to RabbitMQ server
