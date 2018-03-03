@@ -59,8 +59,8 @@ target/
 # Downloaded data files
 data/
 
-# Downloaded models (except file containing the code to download the models)
-skipthoughts/models/*
-!skipthoughts/models/URL.txt
+# Everything in any folders called "models" except files called "URL.txt"
+**/models/*
+!**/models/URL.txt
 
 .env
