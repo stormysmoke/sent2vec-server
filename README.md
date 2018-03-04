@@ -1,6 +1,6 @@
-# QuantumSense - Sent2Vec
+# Sent2Vec
 
-This is the Sent2Vec application. It allows to index the sentences of a text (encoding them as vectors), and then to retrieve the "nearest neighbours" of a query sentence.
+This is the Sent2Vec back-end. It allows to index the sentences of a text (encoding them as vectors), and then to retrieve the "nearest neighbours" of a query sentence.
 
 ## Conceptual Usage Example
 
@@ -15,48 +15,45 @@ The `query` method returns the specified number of nearest neighbour sentences a
 
 ## Deployment
 
-The application is designed to be deployed to a IaaS platform like Google Cloud Platform (GCP) Compute Engine or Amazon Web Services (AWS) EC2. I tested it only on GCP Compute Engine.
-
 ### Compute Instance Requirements
 
-The used machine learning model is around 5.5 GB in size. Thus, the compute instance must provide at least this amount of memory and hard disk space.
+- RAM: the full machine learning model is around 5.5 GB in size. Thus, the compute instance must provide at least this amount of RAM (and hard disk storage).
+- CPUs: I observed no significant performance difference when the app runs on 1, 2, or 4 CPUs. 
 
-I observed no significant performance difference when the app runs on 1, 2, or 4 CPUs. In all cases the indexing of text is rather slow, much slower than on my MacBook Air. It seems that the code can't take advantage of parallelisation and multiple CPUs. This is a problem to be investigated.
+### Docker Image
 
-### Deployment Instructions
+The application is provided as the Docker image on [stormysmoke/sent2vec-back](https://hub.docker.com/r/stormysmoke/sent2vec-back/) on Docker Hub.
 
-The following applies to deployment on **GCP Compute Engine** with a **Debian 9.0** image.
+The machine learning model is included in the Docker image, so the image is quit large. The image versions with a `x.x.x-dev` tag contain a pruned version of the model, which is smaller and loads faster, but doesn't produce any meaningful results. This one is only for development. The image versions with a `x.x.x` version tag contain the full model and are supposed to be used in production.
 
-First of all, you have to copy all the files of this application, including the 5.5 GB model files, to your GCP Compute Engine instance. You can do this for example by cloning this repository to your instance (just first install Git with `sudo apt-get install git-core`). The model files you can download from the URLs listed in the `URL.txt` file in the `models/` directory, for example with `wget -i URL.txt`. You could also upload them from your local machine with `scp`, if you have them locally.
+### Deployment Steps
 
-When all the files are deployed, you have to do the following:
+#### 1. Start up a RabbitMQ server and note its URI
 
-Install `pip` and `pipenv`:
+The application connects to a RabbitMQ server on startup based on the URI that you provide. A RabbitMQ URI has the following form:
 
-~~~bash
-sudo apt-get install python-pip
-sudo pip install pipenv
+~~~
+amqp://user:password@host:port/
 ~~~
 
-Install the Python dependencies and create Python virtual environment (from within the application root directory):
+#### 2. Install Docker
+
+On Ubuntu:
 
 ~~~bash
-pipenv install
+sudo apt-get update
+sudo apt-get -y install docker.io
 ~~~
 
-Install special dependencies for Theano:
+#### 3. Download and run the Docker image
 
 ~~~bash
-sudo apt-get install python-dev
+docker run -d -e RABBITMQ_URI=URI stormysmoke/sent2vec-back:TAG
 ~~~
 
-That's it! Then you can launch the application with:
+Replace `URI` with the URI of the running RabbitMQ server that you noted in step 1, and replace `TAG` with the tag corresponding to the desired version of the image to run.
 
-~~~bash
-pipenv run ./main.py
-~~~
-
-You have to use Pipenv to run the script, because the Python dependencies have been installed only to this specific virtual environment, and Pipenv runs the provided command within this virual environment.
+You can inspect the output of the application with `docker logs CONTAINER`, where `CONTAINER` is the container ID of the container that you just started.
 
 
 ## Communication
