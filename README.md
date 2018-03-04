@@ -50,7 +50,7 @@ sudo apt-get -y install docker.io
 #### 3. Download and run the Docker image
 
 ~~~bash
-docker run -d -e RABBITMQ_URI=<uri> stormysmoke/sent2vec-back:<tag>
+sudo docker run -d -e RABBITMQ_URI=<uri> stormysmoke/sent2vec-back:<tag>
 ~~~
 
 Replace `<uri>` with the URI of the running RabbitMQ server that you noted in step 1, and replace `<tag>` with the tag corresponding to the desired version of the image to run.
