@@ -20,9 +20,11 @@ The `query` method returns the specified number of nearest neighbour sentences a
 - RAM: the full machine learning model is around 5.5 GB in size. Thus, the compute instance must provide at least this amount of RAM (and hard disk storage).
 - CPUs: I observed no significant performance difference when the app runs on 1, 2, or 4 CPUs. 
 
+In general, a [t2.large](https://aws.amazon.com/ec2/instance-types/t2/) EC2 instance on AWS seems to work fine.
+
 ### Docker Image
 
-The application is provided as the Docker image on [stormysmoke/sent2vec-back](https://hub.docker.com/r/stormysmoke/sent2vec-back/) on Docker Hub.
+The application is provided as the Docker image [stormysmoke/sent2vec-back](https://hub.docker.com/r/stormysmoke/sent2vec-back/) on Docker Hub.
 
 The machine learning model is included in the Docker image, so the image is quit large. The image versions with a `x.x.x-dev` tag contain a pruned version of the model, which is smaller and loads faster, but doesn't produce any meaningful results. This one is only for development. The image versions with a `x.x.x` version tag contain the full model and are supposed to be used in production.
 
@@ -48,13 +50,14 @@ sudo apt-get -y install docker.io
 #### 3. Download and run the Docker image
 
 ~~~bash
-docker run -d -e RABBITMQ_URI=URI stormysmoke/sent2vec-back:TAG
+docker run -d -e RABBITMQ_URI=<uri> stormysmoke/sent2vec-back:<tag>
 ~~~
 
-Replace `URI` with the URI of the running RabbitMQ server that you noted in step 1, and replace `TAG` with the tag corresponding to the desired version of the image to run.
+Replace `<uri>` with the URI of the running RabbitMQ server that you noted in step 1, and replace `<tag>` with the tag corresponding to the desired version of the image to run.
 
-You can inspect the output of the application with `docker logs CONTAINER`, where `CONTAINER` is the container ID of the container that you just started.
+You can inspect the output of the application with `docker logs <container>`, where `<container>` is the container ID of the container that you just started.
 
+That's it! That's how easy it is to deploy an application with Docker!
 
 ## Communication
 
