@@ -7,7 +7,7 @@ Various utility functions.
 
 def str2unicode(s):
     """
-    Convert a string to a UTF-8 Unicode object.
+    Decode a string with UTF-8 to a unicode object.
 
     If the passed object is already unicode, then it is returned unchaged.
     """
@@ -18,7 +18,7 @@ def str2unicode(s):
 
 def unicode2str(u):
     """
-    Convert a UTF-8 Unicode object to a string.
+    Encode a unicode object with UTF-8 as a string.
 
     If the passed object is already a string, then it is returned unchanged.
     """
