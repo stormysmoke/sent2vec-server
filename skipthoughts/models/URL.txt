@@ -1,7 +1,7 @@
-https://s3.amazonaws.com/stormy-smoke/skipthoughts/model-pruned/dictionary.txt
-https://s3.amazonaws.com/stormy-smoke/skipthoughts/model-pruned/utable.npy
-https://s3.amazonaws.com/stormy-smoke/skipthoughts/model-pruned/btable.npy
-https://s3.amazonaws.com/stormy-smoke/skipthoughts/model-pruned/uni_skip.npz
-https://s3.amazonaws.com/stormy-smoke/skipthoughts/model-pruned/uni_skip.npz.pkl
-https://s3.amazonaws.com/stormy-smoke/skipthoughts/model-pruned/bi_skip.npz
-https://s3.amazonaws.com/stormy-smoke/skipthoughts/model-pruned/bi_skip.npz.pkl
+http://www.cs.toronto.edu/~rkiros/models/dictionary.txt
+http://www.cs.toronto.edu/~rkiros/models/utable.npy
+http://www.cs.toronto.edu/~rkiros/models/btable.npy
+http://www.cs.toronto.edu/~rkiros/models/uni_skip.npz
+http://www.cs.toronto.edu/~rkiros/models/uni_skip.npz.pkl
+http://www.cs.toronto.edu/~rkiros/models/bi_skip.npz
+http://www.cs.toronto.edu/~rkiros/models/bi_skip.npz.pkl
