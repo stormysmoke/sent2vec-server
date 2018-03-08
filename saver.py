@@ -52,7 +52,8 @@ def _bucket():
     """
     Get a handle to the S3 bucket where the objects are stored.
     """
-    return boto3.resource('s3').Bucket('stormysmoke-sent2vec')
+    # Reads AWS credentials from vars AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY
+    return boto3.resource('s3').Bucket(os.environ['S3_BUCKET_NAME'])
 
 def _s3_key_sent(id):
     """
