@@ -50,12 +50,19 @@ sudo apt-get -y install docker.io
 #### 3. Download and run the Docker image
 
 ~~~bash
-sudo docker run -d -e RABBITMQ_URI=<uri> stormysmoke/sent2vec-back:<tag>
+sudo docker run <env> -d stormysmoke/sent2vec-back:<tag>
 ~~~
 
-Replace `<uri>` with the URI of the running RabbitMQ server that you noted in step 1, and replace `<tag>` with the tag corresponding to the desired version of the image to run.
+In the above command, `<env>` stands for the following environment variable declarations:
 
-You can inspect the output of the application with `docker logs <container>`, where `<container>` is the container ID of the container that you just started.
+- `-e RABBITMQ_URI=<uri>`: URI of the RabbitMQ server that you noted in Step 1
+- `-e AWS_ACCESS_KEY_ID=<key>`: access key of the AWS account to use for the S3 storage
+- `-e AWS_SECRET_ACCESS_KEY=<key>`: secret access key of this AWS account
+- `-e S3_BUCKET_NAME=<name>`: name of the bucket to use in above AWS account
+
+Also, replace `<tag>` with the tag corresponding to the desired version of the image to run.
+
+Once the image is running in a container, you can inspect the output of the application with `docker logs <container>`, where `<container>` is the running container's ID.
 
 That's it! That's how easy it is to deploy an application with Docker!
 
