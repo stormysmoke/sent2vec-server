@@ -3,9 +3,11 @@
 import os
 import pika
 import json
-import sent2vec_manager
+import sent2vec
+import saver
 
-rabbitmq_queue = "sent2vec-front-to-back"
+rabbitmq_queue = 'sent2vec-front-to-back'
+dummy_id = '50154a76-4c4d-43a2-99b0-ea9a3caba91e'
 
 # Callback function for handling message in the request queue
 def __on_request(channel, method, props, body):
@@ -18,13 +20,18 @@ def __on_request(channel, method, props, body):
     # Request is to index a piece of text
     if request['method'] == "index":
         text = request['params']
-        id = sent2vec_manager.index_string(text)
-        result = id
+        d = sent2vec.encode(text)
+        saver.put(dummy_id, d['sent'], d['vec'])
+        result = dummy_id
     # Request is to query a sentence in a previously indexed piece of text
     elif request['method'] == "query":
-        sentence = request['params'][0]
+        target = saver.get(dummy_id)
+        query = request['params'][0]
         k = request['params'][1]
-        result = sent2vec_manager.query(sentence, int(k))
+        knn = sent2vec.knn(query, target['vec'], k)
+        knn_sent = target['sent'][knn['i']].tolist()
+        knn_dist = knn['dist']
+        result = [knn_sent, knn_dist]
     else:
         raise Exception("Invalid method: " + request['method'])
 
@@ -63,7 +70,7 @@ channel.basic_qos(prefetch_count=1)
 channel.basic_consume(__on_request, queue=rabbitmq_queue)
 
 # Initialise the Sent2Vec encoder
-sent2vec_manager.init()
+sent2vec.init()
 
 # Wait for and handle RPC requests
 print(" [x] Awaiting RPC requests")
