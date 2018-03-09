@@ -1,2 +1,5 @@
-# Exclude subdirs of the models/ dir (containing other versions of the model)
-**/models/*/*
+*
+!*.py
+!requirements.txt
+!skipthoughts/__init__.py
+!skipthoughts/skipthoughts.py
