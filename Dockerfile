@@ -33,4 +33,4 @@ RUN apt-get -qq update && apt-get install -y python-dev && apt-get clean
 COPY *.py ./
 COPY skipthoughts/__init__.py skipthoughts/skipthoughts.py skipthoughts/
 
-CMD ["./main.py"]
+CMD ["python", "-u", "main.py"]
