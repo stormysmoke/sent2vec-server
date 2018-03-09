@@ -9,62 +9,87 @@ index("This is a sentence. Another sentence. And so on...")
 query("That's the query sentence.", 3)
 ~~~
 
-The seond argument of the `query` method is the number of nearest neighbours to return.
+The second argument of the `query` method is the number of nearest neighbours to return.
 
 The `query` method returns the specified number of nearest neighbour sentences along with their "distances" to the query sentence. The smaller the distances, the more similar are the two sentences in meaning.
 
 ## Deployment
 
+The application is provided as the [stormysmoke/sent2vec-back](https://hub.docker.com/r/stormysmoke/sent2vec-back/) Docker image on Docker Hub.
+
+The image versions with a tag ending in `-dev` are for development only. They contain a stripped-down Sent2Vec model that is fast to load and deploy, but doesn't produce meaningful results. The other image versions are production-ready.
+
 ### Compute Instance Requirements
 
-- RAM: the full machine learning model is around 5.5 GB in size. Thus, the compute instance must provide at least this amount of RAM (and hard disk storage).
-- CPUs: I observed no significant performance difference when the app runs on 1, 2, or 4 CPUs. 
+The Docker image is currently about 7 GB in size (most of this space is due to the Sent2Vec model). Thus, a computing instance to run the image has the following minimum requirements:
 
-In general, a [t2.large](https://aws.amazon.com/ec2/instance-types/t2/) EC2 instance on AWS seems to work fine.
+- 14 GB free disk storage (double the size of the image for extracting the image after downloading it)
+- 7 GB RAM
+- 1 CPU (performance with more CPUs might be better, but I didn't test it)
 
-### Docker Image
+In general, it works fine on a [t2.large](https://aws.amazon.com/ec2/instance-types/t2/) EC2 instance on AWS.
 
-The application is provided as the Docker image [stormysmoke/sent2vec-back](https://hub.docker.com/r/stormysmoke/sent2vec-back/) on Docker Hub.
+### Prerequisites
 
-The machine learning model is included in the Docker image, so the image is quit large. The image versions with a `x.x.x-dev` tag contain a pruned version of the model, which is smaller and loads faster, but doesn't produce any meaningful results. This one is only for development. The image versions with a `x.x.x` version tag contain the full model and are supposed to be used in production.
+#### 1. RabbitMQ
 
-### Deployment Steps
+The application uses RabbitMQ for communicating with the client.
 
-#### 1. Start up a RabbitMQ server and note its URI
+Make sure you have a running RabbitMQ server listening on the following ports:
 
-The application connects to a RabbitMQ server on startup based on the URI that you provide. A RabbitMQ URI has the following form:
+- 5672 (default)
+- 1723
+
+Note the URI of this server. A RabbitMQ server URI has the following format:
 
 ~~~
-amqp://user:password@host:port/
+amqp://user:password@host:port/virtualhost
 ~~~
 
-#### 2. Install Docker
+You will need this information when you start the Docker image of the application.
 
-On Ubuntu:
+#### 2. AWS S3
+
+The application uses an AWS S3 bucket as a persistent storage.
+
+Create an S3 bucket and note the following information about it:
+
+- Name of the bucket
+- AWS access key of an AWS account that has write access to this bucket
+- AWS secret access key of this account
+
+You will need this information when you start the Docker image of the application.
+
+### Deployment
+
+#### 1. Install Docker
+
+Make sure Docker is installed on the computing instance.
+
+To install Docker on Ubuntu:
 
 ~~~bash
 sudo apt-get update
 sudo apt-get -y install docker.io
 ~~~
 
-#### 3. Download and run the Docker image
+#### 2. Run the Docker Image
 
 ~~~bash
-sudo docker run <env> -d stormysmoke/sent2vec-back:<tag>
+docker run \
+    -d \
+    -e RABBITMQ_URI=<uri> \
+    -e AWS_ACCESS_KEY_ID=<key> \
+    -e AWS_SECRET_ACCESS_KEY=<key> \
+    -e S3_BUCKET_NAME=<name> \
+    stormysmoke/sent2vec-back:<tag>
 ~~~
 
-In the above command, `<env>` stands for the following environment variable declarations:
+As you can see, you need to pass the information that you noted down in the previous section as environment variables to the Docker image.
 
-- `-e RABBITMQ_URI=<uri>`: URI of the RabbitMQ server that you noted in Step 1
-- `-e AWS_ACCESS_KEY_ID=<key>`: access key of the AWS account to use for the S3 storage
-- `-e AWS_SECRET_ACCESS_KEY=<key>`: secret access key of this AWS account
-- `-e S3_BUCKET_NAME=<name>`: name of the bucket to use in above AWS account
+### Monitoring 
 
-Also, replace `<tag>` with the tag corresponding to the desired version of the image to run.
-
-Once the image is running in a container, you can inspect the output of the application with `docker logs <container>`, where `<container>` is the running container's ID.
-
-That's it! That's how easy it is to deploy an application with Docker!
+You can see the output of the application with `docker logs <container>`, where `<container>` is the running container's ID.
 
 ## Communication
 
