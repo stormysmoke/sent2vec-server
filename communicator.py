@@ -54,11 +54,8 @@ def register_on_encode(fun):
     Register function to be called when an "encode" request is received.
 
     Arguments:
-        fun:  a function with the following signature:
-            Arguments:
+        fun:  a function taking the following arguments:
                 text:  the text to be encoded
-            Returns:
-                A string ID identifying the encoded text.
     """
     global _on_encode
     _on_encode = fun
@@ -68,8 +65,7 @@ def register_on_knn(fun):
     Register function to be called when a "knn" request is received.
 
     Arguments:
-        fun:  a function with the following signature:
-            Arguments:
+        fun:  a function taking the following arguments:
                 query:  the query sentence
                 k:      number of nearest neighbours to return
                 id:     ID of the encoded text to which to apply the query
