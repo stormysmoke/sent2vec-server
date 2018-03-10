@@ -34,26 +34,23 @@ def encode(text):
     return dict(sent=sent, vec=vec)
 
 
-def knn(query, vec_arr, k=3):
+def knn(query, record, k):
     """
-    Given a query sentence and the vector encodings of a previously encoded
-    text, get the k-nearest-neighbours to the query sentence in the provided
-    array of vectors.
+    Find k-nearest-neighbours to a query sentence in a previously encoded text.
 
     Arguments:
-        query:    a unicode object representing a sentence.
-        vec_arr:  a NumPy array of vectors as returned by encode()
-        k:        an integer specifying the number of nearest neighbours
+        query:    the query sentence as a unicode object
+        record:   a dict with keys 'sent' and 'vec' as returned by 'encode'
+        k:        number of nearest neighbours to return
 
     Return:
-        A dict with the keys 'i' and 'dist'. The value of 'i' is a list of
-        integers indicating the indices of the k nearest neighbours in the
-        provided array of vectors. The value of 'dist' is a list of floats
-        indicating the distances of these k nearest neighbours to the query
-        sentence (smaller values mean "closer together").
+        A dict with the keys 'sent' and 'dist'. The value of 'sent' is a list
+        of the k nearest sentences to the query sentence. The value of 'dist'
+        is a list of the distances of these sentences to the query sentence.
     """
-    vec_query = _encoder.encode([query])
-    dist_arr = cdist(vec_query, vec_arr)[0]
-    i = dist_arr.argsort()[:k].tolist()
-    dist = dist_arr[i].tolist()
-    return dict(i=i, dist=dist)
+    query_vec = _encoder.encode([query])
+    distances = cdist(query_vec, record['vec'])[0]
+    knn_indices = distances.argsort()[:k].tolist()
+    s = record['sent'][knn_indices].tolist()
+    d = distances[knn_indices].tolist()
+    return dict(sent=s, dist=d)

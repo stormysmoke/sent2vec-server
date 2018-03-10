@@ -11,8 +11,7 @@ def on_encode(text):
 
 def on_knn(query, k, id):
     record = saver.get(id)
-    res = sent2vec.knn(query, record['vec'], k)
-    return dict(sent=record['sent'][res['i']].tolist(), dist=res['dist'])
+    return sent2vec.knn(query, record, k)
 
 sent2vec.init()
 communicator.init()
