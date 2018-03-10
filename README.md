@@ -87,38 +87,48 @@ docker run \
 
 As you can see, you need to pass the information that you noted down in the previous section as environment variables to the Docker image.
 
+You can also use the [run](run) script and just type:
+
+~~~bash
+./run <tag>
+~~~
+
+If you have previousyl `export`ed all the above environment variables.
+
 ### Monitoring 
 
 You can see the output of the application with `docker logs <container>`, where `<container>` is the running container's ID.
 
 ## Communication
 
-The application connects to a RabbitMQ server (running on Heroku) and acts as a RPC server. The message format is inspired by JSON-RPC 2.0 (and eventually should be conformant with this standard), and currently looks as follows:
+Client and server exchange plain text messages via RabbitMQ. the message format is inspired by [JSON RPC 2.0](http://www.jsonrpc.org/specification) (and eventually should be identical with it). 
 
-### Method: `index`
+Currently, the request and response messages look as follows:
+
+### Method: `encode`
 
 Request:
 
 ~~~json
-{"method": "index", "params": "This is a sentence. And so on..."}
+{"method": "encode", "params": {"text": "This is a sentence. And so on..."}}
 ~~~
 
 Response:
 
 ~~~json
-{"result": null}
+{"result": "id"}
 ~~~
 
-### Method: `query`
+### Method: `knn`
 
 Request:
 
 ~~~json
-{"method": "query", "params": ["That's the query sentence.", 3]}
+{"method": "knn", "params": {"query": "That's the query sentence.", "k": 3, "id": "id"}
 ~~~
 
 Response:
 
 ~~~json
-{"result": [["Sentence 1", "Sentence 2", "Sentence 3"], [0.84, 0.94, 1.04]]}
+{"result": {"sent": ["Bla bla", "Bla blah", "Bla bla bla"], "dist": [0.84, 0.94, 1.04]}}
 ~~~
