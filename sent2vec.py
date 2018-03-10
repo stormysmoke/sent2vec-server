@@ -50,7 +50,7 @@ def knn(query, record, k):
     """
     query_vec = _encoder.encode([query])
     distances = cdist(query_vec, record['vec'])[0]
-    knn_indices = distances.argsort()[:k].tolist()
+    knn_indices = distances.argsort()[:int(k)].tolist()
     s = record['sent'][knn_indices].tolist()
     d = distances[knn_indices].tolist()
     return dict(sent=s, dist=d)
