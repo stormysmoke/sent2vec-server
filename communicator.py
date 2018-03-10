@@ -1,6 +1,6 @@
 import os
 import pika
-import json
+import encoder
 
 _queue = 'sent2vec-front-to-back'
 _var = 'RABBITMQ_URI'
@@ -10,17 +10,17 @@ _on_encode = None
 _on_knn = None
 
 def _on_request(channel, method, props, body):
-    req = json.loads(body)
-    print(" [.] Receiving " + str(req))
-    params = req['params']
-    if req['method'] == 'encode':
-        result = _on_encode(params['text'])
-    elif req['method'] == 'knn':
-        result = _on_knn(params['query'], params['k'], params['id'])
-    else:
-        raise Exception("Invalid request method: " + req['method'])
-    response = json.dumps(dict(result=result))
-    print(" [ ] Returning" + str(response))
+    # Decode and handle request
+    print(" [.] Receiving " + body)
+    request = encoder.decode_request(body)
+    if request['method'] == 'encode':
+        result = _on_encode(request['params']['text'])
+    elif request['method'] == 'knn':
+        p = request['params']
+        result = _on_knn(p['query'], p['k'], p['id'])
+    # Encode and return response
+    response = encoder.encode_response(result)
+    print(" [ ] Returning" + response)
     channel.basic_publish(
         exchange='',
         routing_key=props.reply_to,
