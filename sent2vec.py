@@ -2,6 +2,13 @@ import sent_tokenizer
 import skipthoughts.skipthoughts as skipthoughts
 from scipy.spatial.distance import cdist
 
+"""
+Sent2Vec encoder.
+
+This implementation uses Skip-Thoughts implementation and model from
+https://github.com/ryankiros/skip-thoughts.
+"""
+
 _encoder = None
 
 def init():

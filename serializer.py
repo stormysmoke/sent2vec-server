@@ -4,6 +4,13 @@ import gzip
 import tempfile
 import uuid
 
+"""
+Converting arrays of sentences and vectors to files and vice versa.
+
+This implementation uses the NPY format for vector arrays and gzip-compressed
+JSON for sentence arrays.
+"""
+
 def get_filename_ext_sent():
     """
     Filename extension that clients may add to files created by serialize_sent

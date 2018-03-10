@@ -4,6 +4,12 @@ import boto3
 import tempfile
 import serializer as s
 
+"""
+Persistently saving and retrieving records (arrays of sentences and vectors).
+
+This implementation uses AWS S3 as a persistent data storage.
+"""
+
 def put(id, sent_arr, vec_arr):
     """
     Save an array of sentences and an array of vectors under the provided ID.

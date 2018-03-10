@@ -1,8 +1,9 @@
 import json
 
 """
-Implementation of a message format. This implementation: JSON RPC 2.0 with
-named parameters in the request objects.
+Network communication message format.
+
+This implementation: JSON RPC 2.0 with named parameters in the request objects.
 """
 
 def decode_request(body):

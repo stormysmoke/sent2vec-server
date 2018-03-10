@@ -3,8 +3,9 @@ import pika
 import encoder
 
 """
-Communication for requests and responses. This implemenation uses RabbitMQ as
-a message broker.
+Network communication with the client.
+
+This implemenation uses RabbitMQ as a message broker.
 """
 
 _queue = 'sent2vec-front-to-back'
