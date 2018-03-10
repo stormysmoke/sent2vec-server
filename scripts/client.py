@@ -3,14 +3,14 @@
 A client program for testing the Sent2Vec backend.
 
 Usage:
-    client.py index [-t <text>]
-    client.py query [-s <sentence>] [-i <id>] [-k <int>]
+    client.py encode [-t <text>]
+    client.py knn [-q <query>] [-k <int>] [-i <id>]
 
 Options:
-    -t <text>      The text to index
-    -s <sentence>  The query sentence
-    -i <id>        The record ID on which to perform the query
-    -k <int>       The number of nearest neighbours to return
+    -t <text>   The text to encode
+    -q <query>  The query sentence
+    -k <int>    The number of nearest neighbours to return
+    -i <id>     The record ID on which to perform the query
 
 Note: if any of the options is omitted, then a default value is used (see code
 for details).
@@ -27,10 +27,10 @@ from docopt import docopt
 args = docopt(__doc__)
 
 # Default values for command-line options
-index_t = "In this tutorial, the learning speed is your choice. Everything is up to you. If you are struggling, take a break, or reread the material."
-query_s = "If you have problems, do a pause."
-query_i = "123abc"
-query_k = 3
+encode_t = "In this tutorial, the learning speed is your choice. Everything is up to you. If you are struggling, take a break, or reread the material."
+knn_q = "If you have problems, do a pause."
+knn_i = "123abc"
+knn_k = 3
 
 class RpcClient(object):
     """
@@ -43,29 +43,16 @@ class RpcClient(object):
         """
         Create an RPC client for single-argument RPC calls.
         """
-        # If RabbitMQ server URI defined in an env variable, use it
-        var_name = 'RABBITMQ_URI'
-        if var_name in os.environ:
-            rabbitmq_uri = os.environ[var_name]
-            print("Connecting to RabbitMQ on " + rabbitmq_uri)
-            self.connection = pika.BlockingConnection(pika.URLParameters(rabbitmq_uri))
-        # If no RabbitMQ server URI, connect to RabbitMQ server on localhost
+        if 'RABBITMQ_URI' in os.environ:
+            uri = os.environ['RABBITMQ_URI']
         else:
-            print("No RABBITMQ_URI env variable found, connecting to RabbitMQ on localhost.")
-            self.connection = pika.BlockingConnection()
-
+            uri = 'amqp://guest:guest@localhost:5672/'
+        print("Connecting to RabbitMQ: " + uri)
+        self.connection = pika.BlockingConnection(pika.URLParameters(uri))
         self.channel = self.connection.channel()
-
-        # Queue for requests from client to server
-        self.req_queue = self.channel.queue_declare(self.req_queue_name)
-
-        # Queue for responses from server (auto-named)
+        self.channel.queue_declare(self.req_queue_name)
         self.res_queue = self.channel.queue_declare(exclusive=True).method.queue
-
-        # Register callback method for handling messages in response queue
-        self.channel.basic_consume(self.on_response, no_ack=True,
-                                   queue=self.res_queue)
-
+        self.channel.basic_consume(self.on_response, no_ack=True, queue=self.res_queue)
 
     def on_response(self, channel, method, props, body):
         """
@@ -103,14 +90,16 @@ class RpcClient(object):
 client = RpcClient()
 
 req = ""
-if args['index']:
-    t = args['-t'] if args['-t'] != None else index_t
-    req = json.dumps(dict(method = "index", params = t))
-else:
-    s = args['-s'] if args['-s'] != None else query_s
-    i = args['-i'] if args['-i'] != None else query_i
-    k = args['-k'] if args['-k'] != None else query_k
-    req = json.dumps(dict(method = "query", params = [s, int(k)]))
+if args['encode']:
+    t = args['-t'] if args['-t'] != None else encode_t
+    params = dict(text=t)
+    req = json.dumps(dict(method='encode', params=params))
+elif args['knn']:
+    q = args['-q'] if args['-q'] != None else knn_q
+    i = args['-i'] if args['-i'] != None else knn_i
+    k = args['-k'] if args['-k'] != None else knn_k
+    params = dict(query=q, k=k, id=i)
+    req = json.dumps(dict(method = "knn", params=params))
 
 print(" [x] Sending: %s" % req)
 res = client.call(req)
