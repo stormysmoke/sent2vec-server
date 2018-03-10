@@ -59,8 +59,4 @@ target/
 # Downloaded data files
 data/
 
-# Everything in any folders called "models" except files called "URL.txt"
-**/models/*
-!**/models/URL.txt
-
-.env
+.env*
