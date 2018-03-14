@@ -110,13 +110,13 @@ Currently, the request and response messages look as follows:
 Request:
 
 ~~~json
-{"method": "encode", "params": {"text": "This is a sentence. And so on..."}}
+{"method": "encode", "params": {"text": "Bla bla blah..."}, "id": "1234"}
 ~~~
 
 Response:
 
 ~~~json
-{"result": "id"}
+{"result": {"id": "abcd"}, "id": "1234"}
 ~~~
 
 ### Method: `knn`
@@ -124,11 +124,11 @@ Response:
 Request:
 
 ~~~json
-{"method": "knn", "params": {"query": "That's the query sentence.", "k": 3, "id": "id"}
+{"method": "knn", "params": {"query": "That's the query sentence.", "k": 3, "id": "abcd"}, "id": "2345"}
 ~~~
 
 Response:
 
 ~~~json
-{"result": {"sent": ["Bla bla", "Bla blah", "Bla bla bla"], "dist": [0.84, 0.94, 1.04]}}
+{"result": {"sent": ["Bla bla", "Bla blah", "Bla bla bla"], "dist": [0.84, 0.94, 1.04]}, "id": "2345"}
 ~~~

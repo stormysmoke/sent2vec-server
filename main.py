@@ -11,7 +11,7 @@ def _on_encode(text):
     record = sent2vec.encode(text)
     id = str(uuid.uuid4())
     saver.put(id, record['sent'], record['vec'])
-    return id
+    return dict(id=id)
 
 def _on_knn(query, k, id):
     record = saver.get(id)
