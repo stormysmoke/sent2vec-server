@@ -43,8 +43,8 @@ def init():
     print("Connecting to RabbitMQ: " + uri)
     connection = pika.BlockingConnection(pika.URLParameters(uri))
     _channel = connection.channel()
-    _channel.queue_declare(_req_queue)
-    _channel.queue_declare(_res_queue)
+    _channel.queue_declare(_req_queue, auto_delete=True)
+    _channel.queue_declare(_res_queue, auto_delete=True)
     _channel.basic_qos(prefetch_count=1)
     _channel.basic_consume(_on_request, queue=_req_queue)
 
