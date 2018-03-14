@@ -21,7 +21,7 @@ def _on_request(channel, method, props, body):
     Callback function called whenever a message is consumed from the queue.
     """
     # Decode and handle request
-    print(" [.] Receiving " + body)
+    print(" [x] Receiving: " + body)
     decoded = encoder.decode_request(body)
     if decoded['method'] == 'encode':
         result = _on_encode(decoded['params']['text'])
@@ -30,7 +30,7 @@ def _on_request(channel, method, props, body):
         result = _on_knn(p['query'], p['k'], p['id'])
     # Encode and return response
     response = encoder.encode_response(result, body)
-    print(" [ ] Returning" + response)
+    print(" [ ] Returning: " + response)
     channel.basic_publish(exchange='', routing_key=_res_queue, body=response);
     channel.basic_ack(delivery_tag=method.delivery_tag)
 
@@ -79,5 +79,5 @@ def start_listening():
     This function must be called after the "init" and "register_..." functions.
     This call is blocking!
     """
-    print(" [x] Awaiting RPC requests")
+    print(" [X] Awaiting RPC requests")
     _channel.start_consuming()
