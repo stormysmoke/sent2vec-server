@@ -21,7 +21,7 @@ def decode_request(body):
     """
     j = json.loads(body)
 
-    if not 'method' in j or not 'params' in j:
+    if not 'method' in j or not 'params' in j or not 'id' in j:
         raise Exception("Invalid message: " + body)
 
     if j['method'] == 'encode':
@@ -46,17 +46,18 @@ def decode_request(body):
 
     return dict(method=method, params=params)
 
-def encode_response(obj):
+def encode_response(obj, context):
     """
     Encode a response object to a message body to be sent over the wire.
 
     Arguments:
-        obj:  any type of object
+        obj:      any object to be sent as the result to the server
+        context:  the request (before decoding) to which this message responds
 
     Returns:
-        An appropriately encoded message body to be sent over the wire.
+        An encoded message body.
     """
-    return json.dumps(dict(result=obj))
+    return json.dumps(dict(result=obj, id=json.loads(context)['id']))
 
 def _missing_param(p, body):
     return "Param '%s' missing in: %s" % (p, body)

@@ -8,7 +8,8 @@ Network communication with the client.
 This implemenation uses RabbitMQ as a message broker.
 """
 
-_queue = 'sent2vec-front-to-back'
+_req_queue = 'sent2vec-client-to-server'
+_res_queue = 'sent2vec-server-to-client'
 _var = 'RABBITMQ_URI'
 
 _channel = None
@@ -21,20 +22,16 @@ def _on_request(channel, method, props, body):
     """
     # Decode and handle request
     print(" [.] Receiving " + body)
-    request = encoder.decode_request(body)
-    if request['method'] == 'encode':
-        result = _on_encode(request['params']['text'])
-    elif request['method'] == 'knn':
-        p = request['params']
+    decoded = encoder.decode_request(body)
+    if decoded['method'] == 'encode':
+        result = _on_encode(decoded['params']['text'])
+    elif decoded['method'] == 'knn':
+        p = decoded['params']
         result = _on_knn(p['query'], p['k'], p['id'])
     # Encode and return response
-    response = encoder.encode_response(result)
+    response = encoder.encode_response(result, body)
     print(" [ ] Returning" + response)
-    channel.basic_publish(
-        exchange='',
-        routing_key=props.reply_to,
-        properties=pika.BasicProperties(correlation_id=props.correlation_id),
-        body=response)
+    channel.basic_publish(exchange='', routing_key=_res_queue, body=response);
     channel.basic_ack(delivery_tag=method.delivery_tag)
 
 def init():
@@ -46,9 +43,10 @@ def init():
     print("Connecting to RabbitMQ: " + uri)
     connection = pika.BlockingConnection(pika.URLParameters(uri))
     _channel = connection.channel()
-    _channel.queue_declare(_queue)
+    _channel.queue_declare(_req_queue)
+    _channel.queue_declare(_res_queue)
     _channel.basic_qos(prefetch_count=1)
-    _channel.basic_consume(_on_request, queue=_queue)
+    _channel.basic_consume(_on_request, queue=_req_queue)
 
 def register_on_encode(fun):
     """
