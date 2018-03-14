@@ -5,7 +5,7 @@ from scipy.spatial.distance import cdist
 """
 Sent2Vec encoder.
 
-This implementation uses Skip-Thoughts implementation and model from
+This implementation uses the Skip-Thoughts implementation and model found here:
 https://github.com/ryankiros/skip-thoughts.
 """
 
@@ -36,6 +36,7 @@ def encode(text):
         objects). The value of 'vec' is a NumPy array of numerical vectors, one
         vector for each sentence in 'sent'.
     """
+    # If 'text' blank: sent=[], vec=array([], shape=(0, 4800), dtype=float32)
     sent = sent_tokenizer.tokenize(text)
     vec = _encoder.encode(sent)
     return dict(sent=sent, vec=vec)
@@ -55,9 +56,15 @@ def knn(query, record, k):
         of the k nearest sentences to the query sentence. The value of 'dist'
         is a list of the distances of these sentences to the query sentence.
     """
+    # A blank query in a [list] would cause an error in the 'encode' function.
+    if _is_blank(query):
+        return dict(sent=[], dist=[])
     query_vec = _encoder.encode([query])
     distances = cdist(query_vec, record['vec'])[0]
     knn_indices = distances.argsort()[:int(k)].tolist()
     s = record['sent'][knn_indices].tolist()
     d = distances[knn_indices].tolist()
     return dict(sent=s, dist=d)
+
+def _is_blank(s):
+    return not bool(s.strip())
