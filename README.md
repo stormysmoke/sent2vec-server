@@ -35,10 +35,9 @@ In general, it works fine on a [t2.large](https://aws.amazon.com/ec2/instance-ty
 
 The application uses RabbitMQ for communicating with the client.
 
-Make sure you have a running RabbitMQ server listening on the following ports:
+Make sure you have a running RabbitMQ server listening on the default port 5672.
 
-- 5672 (default)
-- 1723
+For development, I often use a RabbitMQ server additionally listening on port 1723, because in some network outgoing connections to port 5672 are blocked by the firewall.
 
 Note the URI of this server. A RabbitMQ server URI has the following format:
 
@@ -75,6 +74,8 @@ sudo apt-get -y install docker.io
 
 #### 2. Run the Docker Image
 
+You can either run the `docker run` command manually:
+
 ~~~bash
 docker run \
     -d \
@@ -85,15 +86,23 @@ docker run \
     stormysmoke/sent2vec-back:<tag>
 ~~~
 
-As you can see, you need to pass the information that you noted down in the previous section as environment variables to the Docker image.
-
-You can also use the [run](run) script and just type:
+Or you can create a `.env` file with the following content (just fill in the variable values):
 
 ~~~bash
-./run <tag>
+export RABBITMQ_URI=
+export S3_BUCKET_NAME=
+export AWS_ACCESS_KEY_ID=
+export AWS_SECRET_ACCESS_KEY=
 ~~~
 
-If you have previousyl `export`ed all the above environment variables.
+And then run the [`run`](run) script as follows (this script sources the `.env` file):
+
+~~~bash
+curl -Lks https://raw.githubusercontent.com/stormysmoke/sent2vec-server/master/run >run && bash run <tag>
+~~~
+
+Where `<tag>` is the desired [tag](https://hub.docker.com/r/stormysmoke/sent2vec-back/tags/) to run.
+
 
 ### Monitoring 
 
