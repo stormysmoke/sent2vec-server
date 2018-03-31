@@ -9,7 +9,6 @@ This implemenation uses RabbitMQ as a message broker.
 """
 
 _req_queue = 'sent2vec-client-to-server'
-_res_queue = 'sent2vec-server-to-client'
 _var = 'RABBITMQ_URI'
 
 _channel = None
@@ -31,7 +30,7 @@ def _on_request(channel, method, props, body):
     # Encode and return response
     response = encoder.encode_response(result, body)
     print(" [ ] Returning: " + response)
-    channel.basic_publish(exchange='', routing_key=_res_queue, body=response);
+    channel.basic_publish(exchange='', routing_key=props.reply_to, body=response);
     channel.basic_ack(delivery_tag=method.delivery_tag)
 
 def init():
@@ -44,7 +43,6 @@ def init():
     connection = pika.BlockingConnection(pika.URLParameters(uri))
     _channel = connection.channel()
     _channel.queue_declare(_req_queue, auto_delete=True)
-    _channel.queue_declare(_res_queue, auto_delete=True)
     _channel.basic_qos(prefetch_count=1)
     _channel.basic_consume(_on_request, queue=_req_queue)
 
