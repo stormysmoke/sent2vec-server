@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# Download the model files specified in an URL file in the models directory.
-dir=skipthoughts/models
-url_file=URL.txt
-wget -i "$dir/$url_file" -P "$dir" -nv -nc

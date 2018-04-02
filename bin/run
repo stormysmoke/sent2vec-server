@@ -1,26 +1,31 @@
 #!/bin/bash
 #
-# First, make sure you have a .env file with the following content:
+# First, create two files called .env and .env-dev with the following variable
+# definitions:
 #
 #   export RABBITMQ_URI=
 #   export S3_BUCKET_NAME=
 #   export AWS_ACCESS_KEY_ID=
 #   export AWS_SECRET_ACCESS_KEY=
 #
-# With the variable values set, of course. Then, run the Docker image with:
+# 
+# Then, execute this script with:
 #
 #   run <tag>
 #
-# Where <tag> is one of the available tags, see:
-# https://hub.docker.com/r/stormysmoke/sent2vec-back/tags/
+# Where <tag> is one of http://hub.docker.com/r/stormysmoke/sent2vec-server/tags
 #------------------------------------------------------------------------------#
 
 set -e
 
-source .env
+[[ -z "$1" ]] && { echo "Usage: run <tag>"; exit 1; }
+
+# Convention: if using a *-dev tag, use variables from .env-dev file.
+[[ "$1" =~ -dev$ ]] && env=.env-dev || env=.env
+source "$env"
 
 [[ -z "$RABBITMQ_URI" || -z "$S3_BUCKET_NAME" || -z "$AWS_ACCESS_KEY_ID" || -z "$AWS_SECRET_ACCESS_KEY" ]] &&
-{ echo "Set variables in .env file first." && exit 1; }
+{ echo "Set variables in .env file first."; exit 1; }
 
 docker run \
   -d \
@@ -28,4 +33,4 @@ docker run \
   -e S3_BUCKET_NAME="$S3_BUCKET_NAME" \
   -e AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID" \
   -e AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY" \
-  stormysmoke/sent2vec-back:"$1"
+  stormysmoke/sent2vec-server:"$1"

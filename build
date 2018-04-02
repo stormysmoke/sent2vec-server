@@ -1,3 +1,0 @@
-#!/bin/bash
-
-docker build -t stormysmoke/sent2vec-back:"$1" .

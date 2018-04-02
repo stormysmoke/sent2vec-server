@@ -9,7 +9,6 @@ This implemenation uses RabbitMQ as a message broker.
 """
 
 _req_queue = 'sent2vec-client-to-server'
-_var = 'RABBITMQ_URI'
 
 _channel = None
 _on_encode = None
@@ -38,7 +37,7 @@ def init():
     Set up any required network communication connections.
     """
     global _channel
-    uri = os.environ[_var] if _var in os.environ else 'amqp://guest:guest@localhost:5672/'
+    uri = os.environ['RABBITMQ_URI']
     print("Connecting to RabbitMQ: " + uri)
     connection = pika.BlockingConnection(pika.URLParameters(uri))
     _channel = connection.channel()

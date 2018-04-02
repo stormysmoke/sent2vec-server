@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker build -t stormysmoke/sent2vec-server:"$1" .

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-A client program for testing the Sent2Vec backend.
+A client program for testing the Sent2Vec server.
 
 Usage:
     client.py encode [-t <text>]

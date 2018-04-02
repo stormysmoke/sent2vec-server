@@ -17,10 +17,10 @@ def _on_knn(query, k, id):
     record = saver.get(id)
     return sent2vec.knn(query, record, k)
 
-sent2vec.init()
 communicator.init()
 communicator.register_on_encode(_on_encode)
 communicator.register_on_knn(_on_knn)
+sent2vec.init()
 
 # This call is blocking and must come last
 communicator.start_listening()
