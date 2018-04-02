@@ -1,5 +1,5 @@
 *
-!*.py
-!requirements.txt
-!skipthoughts/__init__.py
-!skipthoughts/skipthoughts.py
+!app/*.py
+!app/requirements.txt
+!app/skipthoughts/__init__.py
+!app/skipthoughts/skipthoughts.py
