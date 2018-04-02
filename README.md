@@ -1,6 +1,6 @@
-# Sent2Vec
+# Sent2Vec Server
 
-This is the Sent2Vec back-end. It allows to index the sentences of a text (encoding them as vectors), and then to retrieve the "nearest neighbours" of a query sentence.
+The Sent2Vec server application. It allows to encode a text as sentence vectors, and then extract the nearest neighbour sentences of a query sentence.
 
 ## Conceptual Usage Example
 
@@ -11,15 +11,15 @@ query("That's the query sentence.", 3)
 
 The second argument of the `query` method is the number of nearest neighbours to return.
 
-The `query` method returns the specified number of nearest neighbour sentences along with their "distances" to the query sentence. The smaller the distances, the more similar are the two sentences in meaning.
+The `query` method returns the specified number of nearest neighbour sentences along with their "distances" to the query sentence. The smaller the distances, the more semantically similar are the sentences.
 
-## Deployment
+## Docker Image
 
-The application is provided as the [stormysmoke/sent2vec-back](https://hub.docker.com/r/stormysmoke/sent2vec-back/) Docker image on Docker Hub.
+[stormysmoke/sent2vec-back](https://hub.docker.com/r/stormysmoke/sent2vec-server/)
 
-The image versions with a tag ending in `-dev` are for development only. They contain a stripped-down Sent2Vec model that is fast to load and deploy, but doesn't produce meaningful results. The other image versions are production-ready.
+The versions with a `*-dev` tag contain a stripped-down model that does not return meaningful result, but is faster to load. It is to be used during development only.
 
-### Compute Instance Requirements
+## Compute Instance Requirements
 
 The Docker image is currently about 7 GB in size (most of this space is due to the Sent2Vec model). Thus, a computing instance to run the image has the following minimum requirements:
 
@@ -29,84 +29,61 @@ The Docker image is currently about 7 GB in size (most of this space is due to t
 
 In general, it works fine on a [t2.large](https://aws.amazon.com/ec2/instance-types/t2/) EC2 instance on AWS.
 
-### Prerequisites
+## Dependencies
 
-#### 1. RabbitMQ
+The Sent2Vec server uses several other services which must be set up before starting this application.
 
-The application uses RabbitMQ for communicating with the client.
+### RabbitMQ
 
 Make sure you have a running RabbitMQ server listening on the default port 5672.
 
 For development, I often use a RabbitMQ server additionally listening on port 1723, because in some network outgoing connections to port 5672 are blocked by the firewall.
 
-Note the URI of this server. A RabbitMQ server URI has the following format:
+You will need the URI of this server.
+
+A RabbitMQ server URI has the following format:
 
 ~~~
 amqp://user:password@host:port/virtualhost
 ~~~
 
-You will need this information when you start the Docker image of the application.
-
-#### 2. AWS S3
-
-The application uses an AWS S3 bucket as a persistent storage.
+### AWS S3
 
 Create an S3 bucket and note the following information about it:
 
 - Name of the bucket
 - AWS access key of an AWS account that has write access to this bucket
-- AWS secret access key of this account
+- AWS secret access key of this AWS account
 
-You will need this information when you start the Docker image of the application.
 
-### Deployment
+## Run
 
-#### 1. Install Docker
-
-Make sure Docker is installed on the computing instance.
-
-To install Docker on Ubuntu:
-
-~~~bash
-sudo apt-get update
-sudo apt-get -y install docker.io
-~~~
-
-#### 2. Run the Docker Image
-
-You can either run the `docker run` command manually:
+Run the Docker image with:
 
 ~~~bash
 docker run \
     -d \
     -e RABBITMQ_URI=<uri> \
+    -e S3_BUCKET_NAME=<bucket> \
     -e AWS_ACCESS_KEY_ID=<key> \
-    -e AWS_SECRET_ACCESS_KEY=<key> \
-    -e S3_BUCKET_NAME=<name> \
+    -e AWS_SECRET_ACCESS_KEY=<secret-key> \
     stormysmoke/sent2vec-back:<tag>
 ~~~
 
-Or you can create a `.env` file with the following content (just fill in the variable values):
+Equivalently, you can run the image with:
 
 ~~~bash
-export RABBITMQ_URI=
-export S3_BUCKET_NAME=
-export AWS_ACCESS_KEY_ID=
-export AWS_SECRET_ACCESS_KEY=
+bin/run <tag>
 ~~~
 
-And then run the [`run`](run) script as follows (this script sources the `.env` file):
+Where `<tag>` is the desired version tag to run. This requires that the file `.env` exists in the current working directory with the following variable definitions:
 
 ~~~bash
-curl -Lks https://raw.githubusercontent.com/stormysmoke/sent2vec-server/master/run >run && bash run <tag>
+export RABBITMQ_URI=<uri>
+export S3_BUCKET_NAME=<bucket>
+export AWS_ACCESS_KEY_ID=<key>
+export AWS_SECRET_ACCESS_KEY=<secret-key>
 ~~~
-
-Where `<tag>` is the desired [tag](https://hub.docker.com/r/stormysmoke/sent2vec-back/tags/) to run.
-
-
-### Monitoring 
-
-You can see the output of the application with `docker logs <container>`, where `<container>` is the running container's ID.
 
 ## Communication
 
