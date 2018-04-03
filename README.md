@@ -15,7 +15,7 @@ The `query` method returns the specified number of nearest neighbour sentences a
 
 ## Docker Image
 
-[stormysmoke/sent2vec-back](https://hub.docker.com/r/stormysmoke/sent2vec-server/)
+[stormysmoke/sent2vec-server](https://hub.docker.com/r/stormysmoke/sent2vec-server/)
 
 The versions with a `*-dev` tag contain a stripped-down model that does not return meaningful result, but is faster to load. It is to be used during development only.
 
@@ -67,7 +67,7 @@ docker run \
     -e S3_BUCKET_NAME=<bucket> \
     -e AWS_ACCESS_KEY_ID=<key> \
     -e AWS_SECRET_ACCESS_KEY=<secret-key> \
-    stormysmoke/sent2vec-back:<tag>
+    stormysmoke/sent2vec-server:<tag>
 ~~~
 
 Equivalently, you can run the image with:
