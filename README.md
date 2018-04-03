@@ -76,13 +76,21 @@ Equivalently, you can run the image with:
 bin/run <tag>
 ~~~
 
-Where `<tag>` is the desired version tag to run. This requires that the file `.env` exists in the current working directory with the following variable definitions:
+Where `<tag>` is the desired version to run. This requires the file `.env` in the current working directory with the following variable definitions:
 
 ~~~bash
 export RABBITMQ_URI=<uri>
 export S3_BUCKET_NAME=<bucket>
 export AWS_ACCESS_KEY_ID=<key>
 export AWS_SECRET_ACCESS_KEY=<secret-key>
+~~~
+
+By convention, if using a `*-dev` tag, the `bin/run` script uses the file `.env-dev` instead of `.env`.
+
+You can download the `bin/run` file in a single command (e.g. on an IaaS computing instance) like this:
+
+~~~bash
+curl -Lks https://raw.githubusercontent.com/stormysmoke/sent2vec-server/master/bin/run >run
 ~~~
 
 ## Communication
