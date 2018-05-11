@@ -70,10 +70,10 @@ docker run \
     stormysmoke/sent2vec-server:<tag>
 ~~~
 
-Equivalently, you can run the image with:
+Equivalently, you can run the image with the [run](https://raw.githubusercontent.com/stormysmoke/sent2vec-server/master/bin/run) script in `bin/run`:
 
 ~~~bash
-bin/run <tag>
+./run <tag>
 ~~~
 
 Where `<tag>` is the desired version to run. This requires the file `.env` in the current working directory with the following variable definitions:
