@@ -21,13 +21,16 @@ The versions with a `*-dev` tag contain a stripped-down model that does not retu
 
 ## Compute Instance Requirements
 
-The Docker image is currently about 7 GB in size (most of this space is due to the Sent2Vec model). Thus, a computing instance to run the image has the following minimum requirements:
+### Memory
 
-- 14 GB free disk storage (double the size of the image for extracting the image after downloading it)
-- 7 GB RAM
-- 1 CPU (performance with more CPUs might be better, but I didn't test it)
+- According to `docker stats`, a single container instance of the image uses ~5.6 GB of memory.
+- When running nothing else than a single container instance on Ubuntu 16.04, the total memory usage of the machine is ~6 GB (reported by `free -m` as *used*).
 
-In general, it works fine on a [t2.large](https://aws.amazon.com/ec2/instance-types/t2/) EC2 instance on AWS.
+Thus, for running a single container, the machine must at least have 6 GB of memory. In general, an 8 GB machine, like a [t2.large](https://aws.amazon.com/ec2/instance-types/t2/) EC2 instance on AWS, works well for running a single container.
+
+### CPU
+
+I didn't notice a large performance difference when using a machine with a single CPU or with multiple CPUs.
 
 ## Dependencies
 
