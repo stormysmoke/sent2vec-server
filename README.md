@@ -58,7 +58,9 @@ Create an S3 bucket and note the following information about it:
 
 ## Run
 
-Run the Docker image with:
+### Direct
+
+You can run the Docker image directly with:
 
 ~~~bash
 docker run \
@@ -70,13 +72,23 @@ docker run \
     stormysmoke/sent2vec-server:<tag>
 ~~~
 
-Equivalently, you can run the image with the [run](https://raw.githubusercontent.com/stormysmoke/sent2vec-server/master/bin/run) script in `bin/run`:
+### Script
+
+Alternatively, you can run the image with the [`bin/run`](https://raw.githubusercontent.com/stormysmoke/sent2vec-server/master/bin/run) script as follows:
 
 ~~~bash
-./run <tag>
+bin/run <tag>
 ~~~
 
-Where `<tag>` is the desired version to run. This requires the file `.env` in the current working directory with the following variable definitions:
+Or in a single command including the download of the script:
+
+~~~bash
+curl -Lks https://raw.githubusercontent.com/stormysmoke/sent2vec-server/master/bin/run | bash -s <tag>
+~~~
+
+Where `<tag>` is the desired version to run.
+
+For this to work, you have to create the file `.env` in the current working directory with the following content:
 
 ~~~bash
 export RABBITMQ_URI=<uri>
@@ -85,13 +97,9 @@ export AWS_ACCESS_KEY_ID=<key>
 export AWS_SECRET_ACCESS_KEY=<secret-key>
 ~~~
 
-By convention, if using a `*-dev` tag, the `bin/run` script uses the file `.env-dev` instead of `.env`.
+Set the values of the variables in `.env` to the appropriate information that you took not in the *Dependencies* section.
 
-You can download the `bin/run` file in a single command (e.g. on an IaaS computing instance) like this:
-
-~~~bash
-curl -Lks https://raw.githubusercontent.com/stormysmoke/sent2vec-server/master/bin/run >run
-~~~
+*Note: by convention, if using a `*-dev` tag of the image, then the file must be called `.env-dev` instead of `.env`.*
 
 ## Communication
 
